@@ -61,23 +61,32 @@ void display()
 
 		CFFT::Forward(complexData, N);
 
+		double SumAmp = 0.0;
 
 		//Цикла для задания АЧХ
-		for (int i = 0; i < numberOfSamples/2 ; i++)
+		for (int i = 0; i < numberOfSamples ; i++)
 		{
 			unsigned int currsamp = sf_seek(infile, 0, SEEK_CUR);
 			double amplitude = complexData[i].amplitude()/N;
 			double valueIndB = 20.0f * log10f(amplitude);
+			
+			SumAmp += valueIndB;
 			unsigned int rr, gg, bb;
 			palette_spectrum((valueIndB + 120)/100, rr, gg, bb);
 			glColor3ub(rr, gg, bb);
 			
-			/*cout << "Hz = " << (i * FREQ / N )/2 << "Sample = (" << 
+			/*cout << "Hz = " << (i * FREQ / N ) << " Sample = (" << 
 			currsamp - N << " - " << currsamp << ") Time = (" << (currsamp - N) * 1.0/FREQ << " - " << currsamp * 1.0/FREQ 
-			<< "s) dB = " << valueIndB << endl;*/
+			<< "s) dB = " << valueIndB << " amp = " << amplitude << endl;*/
+			
+			
 		        glVertex2f((double)sf_seek(infile, 0, SEEK_CUR)/sfinfo.frames,(double)i/(N/2/sfinfo.channels));
+			
+			//cout << sf_seek(infile, 0, SEEK_CUR)/sfinfo.frames,(double)i/(N/2/sfinfo.channels)  << " ";
+			
 		}
-		
+		cout << endl;
+		cout << SumAmp / numberOfSamples << endl;
 		
 	}
 	delete[] complexData;
